@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>UIC Finals Dashboard</title>
+<style type="text/css">
+#topbar {
+    text-align: center;
+}
+#finalsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: stretch;
+}
+.final {
+    width: 17%;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 2fr 1fr 1fr;
+    border: solid;
+    margin-bottom: 50px;
+}
+.finalNum {
+    grid-row: 1;
+    grid-column: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: xx-large;
+}
+.finalCountdown {
+    grid-row: 1;
+    grid-column: 2;
+    text-align: right;
+    font-weight: bold;
+    font-size: xx-large;
+    padding-right: 50px;
+}
+.finalTime {
+    text-align: center;
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+.finalLocation {
+    grid-row: 3;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+}
+.upcoming {
+    background-color: #33cc33;
+    color: white;
+}
+.inProgress {
+    background-color: #ff9933;
+}
+.ended {
+    background-color: #e60000;
+}
+.past {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="topbar"><h1>{{semester}} {{year}} Graduation</h1></div>
+<div id="finalsContainer">
+    {{#finalsList}}
+    <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
+        <p class="finalNum">{{courseNum}}</p>
+        <p class="finalLocation">{{#finalLocations}}<span>{{.}}</span>{{/finalLocations}}</p>
+        <p class="finalTime"></p>
+        <p class="finalCountdown"><!-- Ba na na na! -->00:00:00</p>
+    </div>
+    {{/finalsList}}
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+<script type="text/javascript">
+    window.onload = function() {
+        const times = [];
+        const now = moment();
+
+        Array.from(document.getElementsByClassName("finalTime")).map((ft, i) => {
+            const final = ft.parentNode;
+            const start = moment(final.dataset.finalStart);
+            const end = moment(final.dataset.finalEnd);
+            const past = (end.dayOfYear() < now.dayOfYear());
+            times[i] = {start, end, past};
+            ft.innerHTML = start.format("dddd MMM DD, h:mm A");
+            if (past) {
+                // final.classList.push("past");
+            }
+        });
+
+        function updateCountdowns() {
+            const now = moment();
+            Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
+                if (times[i].past) return;
+                const diff = moment.duration(times[i].start.diff(now));
+
+                const hrs = Math.floor(diff.asHours());
+                if (hrs < 0) {
+                    times[i].past = (end.dayOfYear() < now.dayOfYear());
+                    fc.innerHTML = "00:00:00";
+                    return;
+                }
+
+                let mins = diff.minutes();
+                if (mins <= 0) mins = "00"
+                else if (mins < 10) mins = `0${mins}`;
+
+                let secs = diff.seconds();
+                if (mins <= 0) mins = "00"
+                else if (secs < 10) secs = `0${secs}`;
+
+                fc.innerHTML = `${hrs}:${mins}:${secs}`;
+            })
+            window.setTimeout(updateCountdowns, 500);
+        }
+
+        window.setTimeout(updateCountdowns, 500);
+
+    };
+</script>
+</body>
+</html>

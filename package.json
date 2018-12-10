@@ -1,0 +1,37 @@
+{
+  "name": "finals-dashboard-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chase Lee and Will Toher",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.10",
+    "@types/express": "^4.16.0",
+    "@types/koa": "^2.0.47",
+    "@types/koa-response-time": "^2.0.1",
+    "@types/koa-views": "^2.0.3",
+    "@types/mustache": "^0.8.32",
+    "@types/pug": "^2.0.4",
+    "@types/request": "^2.48.1",
+    "@types/request-promise-native": "^1.0.15",
+    "@types/winston": "^2.4.4",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "koa": "^2.6.2",
+    "koa-response-time": "^2.1.0",
+    "koa-views": "^6.1.4",
+    "moment": "^2.22.2",
+    "mustache": "^3.0.1",
+    "pug": "^2.0.3",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "winston": "^3.1.0"
+  }
+}
