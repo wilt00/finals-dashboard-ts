@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import * as moment from "moment";
 import * as rp from "request-promise-native";
+import { start } from "repl";
 // import {inspect} from "util";
 
 const finalsUrl = "https://registrar.uic.edu/current_students/calendars/final-exams";
@@ -79,12 +80,15 @@ export async function getFinals(): Promise<IExamInfo[]> {
         // Determine whether start time is in morning or afternoon
         // Start time will be 'am' if either:
         //  - End time is 'am', or
-        //  - Numeric hour of start time is greater than end time (e.g. 12 > 1) AND not equal to 12
+        //  - Numeric hour of start time is greater than end time (e.g. 11 > 1) AND not equal to 12, or
+        //  - Numeric hour of end time is 12 and numeric hour of star time is < 12
         // Assumptions: no exam will ever be held across midnight
         const startHr = parseInt(cell2[1].split(":")[0], 10);
         const endHr = parseInt(cell2[2].split(":")[0], 10);
         const startTimeAMPM = (
-            cell2[3] === "am" || ((startHr > endHr) && startHr !== 12)
+            cell2[3] === "am" ||
+            ((startHr > endHr) && startHr !== 12) ||
+            (endHr === 12 && startHr < 12)
         ) ? "am" : "pm";
         const startTimeString = `${cell1} ${cell2[1]} ${startTimeAMPM}`;
         const endTimeString = `${cell1} ${cell2[2]} ${cell2[3]}`;
