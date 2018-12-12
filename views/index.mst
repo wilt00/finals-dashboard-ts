@@ -114,8 +114,8 @@ html,body {
             Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
                 if (times[i].past) return;
                 const diff = moment.duration(times[i].start.diff(now));
-                const _hrs = Math.floor(diff.asHours());
-                if (_hrs < 0) {
+                const hrs = Math.floor(diff.asHours());
+                if (hrs < 0) {
                     fc.parentElement.classList.remove("countdownWarning");
                     if (times[i].start.unix() < now.unix() && times[i].end.unix() > now.unix()) {
                         fc.parentElement.classList.add("inProgress")
@@ -130,14 +130,10 @@ html,body {
                     }
                     return;
                 }
-                if (_hrs < 2) {
+                if (hrs < 2) {
                     fc.parentElement.classList.add("countdownWarning")
                 }
-                
-                let hrs = Math.floor(diff.asHours());
-                if (hrs <= 0) hrs = "00";
-                else if (hrs < 10) hrs = `0${hrs}`;
-                
+
                 let mins = diff.minutes();
                 if (mins <= 0) mins = "00";
                 else if (mins < 10) mins = `0${mins}`;
@@ -146,12 +142,11 @@ html,body {
                 if (secs <= 0) secs = "00";
                 else if (secs < 10) secs = `0${secs}`;
     
-                fc.innerHTML = `${hrs}:${mins}:${secs}`;
-                });
-            }
-            window.setInterval(updateCountdowns, 1000);
-    
-        };
+                fc.innerHTML = `${hrs.toString().padStart(2,0)}:${mins}:${secs}`;
+            });
+        }
+        window.setInterval(updateCountdowns, 1000);
+    };
 </script>
 </body>
 </html>
