@@ -78,10 +78,14 @@ html,body {
 .countdownWarning {
     background-color: #FC4A1A;
 }
+#gradCountdown {
+    font-family: 'Roboto Mono', monospace;
+    color: lightgoldenrodyellow;
+}
 </style>
 </head>
 <body>
-<div id="topbar" class="coolShadow"><h1>{{semester}} {{year}} Graduation</h1></div>
+<div id="topbar" class="coolShadow"><h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1></div>
 <div id="finalsContainer">
     {{#finalsList}}
     <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
@@ -108,7 +112,10 @@ html,body {
             if (past) {
                 final.classList.add("past");
             }
-            });
+        });
+
+        const gradTime = times.slice(-1)[0].end;
+
         function updateCountdowns() {
             const now = moment();
             Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
@@ -137,13 +144,21 @@ html,body {
                 let mins = diff.minutes();
                 if (mins <= 0) mins = "00";
                 else if (mins < 10) mins = `0${mins}`;
-                
+
                 let secs = diff.seconds();
                 if (secs <= 0) secs = "00";
                 else if (secs < 10) secs = `0${secs}`;
-    
+
                 fc.innerHTML = `${hrs.toString().padStart(2,0)}:${mins}:${secs}`;
             });
+            const gradTimeDiff = moment.duration(gradTime.diff(moment()));
+            document.getElementById("gradCountdown").innerHTML = `${
+                Math.floor(gradTimeDiff.asHours()).toString().padStart(2,0)
+            }:${
+                gradTimeDiff.minutes().toString().padStart(2,0)
+            }:${
+                gradTimeDiff.seconds().toString().padStart(2,0)
+            }`;
         }
         window.setInterval(updateCountdowns, 1000);
     };
