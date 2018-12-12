@@ -134,7 +134,7 @@ html,body {
                     fc.parentElement.classList.add("countdownWarning")
                 }
                 
-                let hrs = diff.hours();
+                let hrs = Math.floor(diff.asHours());
                 if (hrs <= 0) hrs = "00";
                 else if (hrs < 10) hrs = `0${hrs}`;
                 
