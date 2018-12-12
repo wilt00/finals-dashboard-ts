@@ -93,11 +93,11 @@ html,body {
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
 <script type="text/javascript">
-window.onload = function() {
-    const times = [];
-    const now = moment();
+    window.onload = function() {
+        const times = [];
+        const now = moment();
 
-    Array.from(document.getElementsByClassName("finalTime")).map((ft, i) => {
+        Array.from(document.getElementsByClassName("finalTime")).map((ft, i) => {
             const final = ft.parentNode;
             const start = moment(final.dataset.finalStart);
             const end = moment(final.dataset.finalEnd);
@@ -108,9 +108,9 @@ window.onload = function() {
                 final.classList.add("past");
             }
             });
-    function updateCountdowns() {
-        const now = moment();
-        Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
+        function updateCountdowns() {
+            const now = moment();
+            Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
                 if (times[i].past) return;
                 const diff = moment.duration(times[i].start.diff(now));
                 const _hrs = Math.floor(diff.asHours());
@@ -144,13 +144,13 @@ window.onload = function() {
                 let secs = diff.seconds();
                 if (secs <= 0) secs = "00";
                 else if (secs < 10) secs = `0${secs}`;
-
+    
                 fc.innerHTML = `${hrs}:${mins}:${secs}`;
-            })
-        }
-        window.setInterval(updateCountdowns, 1000);
-
-    };
+                });
+            }
+            window.setInterval(updateCountdowns, 1000);
+    
+        };
 </script>
 </body>
 </html>
