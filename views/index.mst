@@ -5,6 +5,7 @@
 <title>UIC Finals Dashboard</title>
 <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto+Mono" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4ABDAC">
 <style type="text/css">
 html,body {
     margin: 0;
