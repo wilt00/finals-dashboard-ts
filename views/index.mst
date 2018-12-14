@@ -102,7 +102,43 @@ html,body {
         const times = [];
         const now = moment();
 
-        Array.from(document.getElementsByClassName("finalTime")).map((ft, i) => {
+        const finalCards = Array.from(document.getElementsByClassName("final"))
+        .filter((f) => {
+            if (moment(f.dataset.finalEnd).dayOfYear < now.dayOfYear) {
+                f.classList.add("past");
+                return false;
+            }
+            return true;
+        });
+
+        const finalCountdowns = Array.from(document.getElementsByClassName("finalCountdown"))
+        .filter((f) => !f.parentElement.classList.contains("past"));
+
+        // Account for dead panels in monitor wall
+        // Panels are numbered from the top left corner, starting from 0
+        // 0, 1, ... 4
+        // 5, 6, ... etc
+        // The first card lands in panel 5, so we only do anything when the panel
+        //  number is between 5 and 19 inclusive
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('deadPanels')) {
+            const finalsContainer = document.getElementById("finalsContainer");
+            urlParams.get('deadPanels')
+            .split(',')
+            .map(parseInt)
+            .filter((p) => !(!p || p < 5 || p > 19))  // Double negation to short-circuit NaN
+            .map((p) => {
+                let refCard = finalCards[p-5];
+                if (!refCard) refCard = null;
+                const deadCard = document.createElement("div");
+                deadCard.classList.add("final");
+                finalsContainer.insertBefore(deadCard, refCard);
+            });
+        }
+
+        Array.from(document.getElementsByClassName("finalTime"))
+        .filter((f) => !f.parentElement.classList.contains("past"))
+        .map((ft, i) => {
             const final = ft.parentNode;
             const start = moment(final.dataset.finalStart);
             const end = moment(final.dataset.finalEnd);
@@ -118,7 +154,8 @@ html,body {
 
         function updateCountdowns() {
             const now = moment();
-            Array.from(document.getElementsByClassName("finalCountdown")).map((fc, i) => {
+
+            finalCountdowns.map((fc, i) => {
                 if (times[i].past) return;
                 const diff = moment.duration(times[i].start.diff(now));
                 const hrs = Math.floor(diff.asHours());
