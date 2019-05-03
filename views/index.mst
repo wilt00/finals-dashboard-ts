@@ -85,7 +85,9 @@ html,body {
 </style>
 </head>
 <body>
-<div id="topbar" class="coolShadow"><h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1></div>
+<div id="topbar" class="coolShadow">
+    <h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1>
+</div>
 <div id="finalsContainer">
     {{#finalsList}}
     <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
