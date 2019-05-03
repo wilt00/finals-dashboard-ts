@@ -1,14 +1,13 @@
 import * as cheerio from "cheerio";
 import * as moment from "moment";
 import * as rp from "request-promise-native";
-// import {inspect} from "util";
 
 const finalsUrl = "https://registrar.uic.edu/current_students/calendars/final-exams";
 
 /**
  * Information for the final exam for a class
  */
-export interface IExamInfo {
+export default interface IExamInfo {
     courseDept: string;        // e.g. CS
     courseNum: string;         // e.g. 141; formerly courseName
     courseId: Set<string>;     // CRN; formerly courseNum

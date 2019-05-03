@@ -1,10 +1,22 @@
 import * as Koa from "koa";
+import * as kstatic from "koa-static";
 import * as views from "koa-views";
 
-import {getFinals, IExamInfo} from "./scraper";
+import IExamInfo, {getFinals} from "./scraper";
 
-const SEMESTER = "Fall";
-const YEAR = "2018";
+const now = new Date();
+const month = now.getMonth();
+
+let SEMESTER: string;
+if (month >= 1 && month <= 5)  {
+    SEMESTER = "Spring";      // February through June
+} else if (month >= 6 && month <= 8) {
+    SEMESTER = "Summer";      // July through September
+} else {
+    SEMESTER = "Fall";        // October through January
+}
+
+const YEAR = now.getFullYear().toString();
 
 let FINALSLIST: IExamInfo[];
 
@@ -14,6 +26,11 @@ const app = new Koa();
 
 // app.use() adds the given function to the chain of functions run on each incoming
 // http request. Koa calls these functions "middleware" (and so does everyone else)
+
+// Register the static file serving middleware
+// Any files under the ./static subdirectory become available:
+// e.g. ./static/abc.html is served at http://[siteaddress].edu/abc.html
+app.use(kstatic("static"));
 
 // Register the template rendering middleware
 // This adds the ctx.response.render method, and sets .mst files to be rendered
@@ -28,15 +45,29 @@ app.use(async (ctx, next) => {
         // If FINALSLIST is not populated, get finals and filter just the CS courses
         FINALSLIST = (await getFinals()).filter((xm) => xm.courseDept === "CS");
     }
-    // Render index.mst into html, substituting the values in the object into the
-    //  template.
-    // No matter what the user asks for, we always give them the main page
-    // This will be a problem for static assets, favicons, scripts, etc.
-    await ctx.render("./index.mst", {
-        semester: SEMESTER,
-        year: YEAR,
-        finalsList: FINALSLIST,
-    });
+
+    // In a larger application, you might use a router here, which connects
+    //  url strings with functions. This is enough for us though.
+    switch (ctx.url) {
+        case "/":
+        case "/index.html":
+            // Render index.mst into html, substituting the values in the object into the
+            //  template.
+            await ctx.render("./index.mst", {
+                semester: SEMESTER,
+                year: YEAR,
+                finalsList: FINALSLIST,
+            });
+            break;
+        case "/api/finals.json":
+            ctx.body = {
+                status: "success",
+                finals: FINALSLIST,
+            };
+            break;
+    }
+    // Static asset urls have already been handled earlier in the middleware chain,
+    //  no need for us to test for those here
 });
 
 app.listen(8080);
