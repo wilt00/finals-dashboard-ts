@@ -42,6 +42,7 @@ export async function getFinals(): Promise<IExamInfo[]> {
 
     // Regex:           (1. Dept --)   (2. Number )   -   (3. CRN | ALL)
     const cell0REpt1 = /([A-Z]{2,4})\s+([0-9]{2,3})\s+-\s+([0-9]{5}|ALL)/;
+
     //                  (4. Time and Day ---------------------------------)
     //                   (5. Class Time                  ) (6. Class Days) Time/days optional
     const cell0REpt2 = /(([0-9]{1,2}:[0-9]{2}\s+(?:AM|PM)) (\([MTWRFS]+\)))?/;
@@ -50,29 +51,32 @@ export async function getFinals(): Promise<IExamInfo[]> {
     //  didn't work because all the "\s"s turned into "s"s
     const cell0RE = new RegExp(cell0REpt1.source + cell0REpt2.source);
 
-    // Regex:        (1. Start Time -----)   -   (2. End Time -------) (3. --)
-    const cell2RE = /([0-9]{1,2}:[0-9]{2})\s+-\s+([0-9]{1,2}:[0-9]{2}) (am|pm)/;
+    // Regex:                   (1. Start Time -----)   (2. - )        (3. End Time -------) (4. --)
+    const cell2RE = new RegExp(/([0-9]{1,2}:[0-9]{2})\s*(am|pm)?\s*-\s+([0-9]{1,2}:[0-9]{2}) (am|pm)/, "i");
+
+    const getCell = (tds: Cheerio, i: number) => tds.eq(i).text().trim();
 
     page("#finals > tbody").children("tr").each((i, elem) => {
         const tds = page(elem).children();
 
-        const cell0 = cell0RE.exec(tds.eq(0).text().trim());
-        const cell1 = tds.eq(1).text().trim(); // No regex necessary
-        const cell2 = cell2RE.exec(tds.eq(2).text().trim());
-        const cell3 = tds.eq(3).text().trim();
-        const cell4 = tds.eq(4).text().trim();
-        const cell5 = tds.eq(5).text().trim();
+        const courseCell = cell0RE.exec(getCell(tds, 0));
+        const dayCell = getCell(tds, 1); // No regex necessary
+        const timeCell = cell2RE.exec(getCell(tds, 2));
+        const bldgCell = getCell(tds, 3);
+        const roomCell = getCell(tds, 4);
+        const commentCell = getCell(tds, 5);
 
-        if (!cell0 || !cell2) {
+        if (!courseCell || !timeCell) {
             // Something has gone wrong with the regex - skip
             console.log("Regex could not parse finals line:");
-            console.log(tds.eq(0).text().trim());
-            console.log(tds.eq(2).text().trim());
+            console.log(`Parsed: ${getCell(tds, 0)} \n to:`);
+            console.log(courseCell); // Expect regex object
+            console.log(` and parsed: ${getCell(tds, 2)} \n to: ${timeCell}`);
             return;
         }
 
         // Key: Dept Num Time
-        const key = `${cell0[1]} ${cell0[2]} ${cell0[4]} ${cell1} ${cell2}`;
+        const key = `${courseCell[1]} ${courseCell[2]} ${courseCell[4]} ${dayCell} ${timeCell}`;
 
         // Only end time's "am/pm" is given
         // Determine whether start time is in morning or afternoon
@@ -81,15 +85,15 @@ export async function getFinals(): Promise<IExamInfo[]> {
         //  - Numeric hour of start time is greater than end time (e.g. 11 > 1) AND not equal to 12, or
         //  - Numeric hour of end time is 12 and numeric hour of star time is < 12
         // Assumptions: no exam will ever be held across midnight
-        const startHr = parseInt(cell2[1].split(":")[0], 10);
-        const endHr = parseInt(cell2[2].split(":")[0], 10);
+        const startHr = parseInt(timeCell[1].split(":")[0], 10);
+        const endHr = parseInt(timeCell[3].split(":")[0], 10);
         const startTimeAMPM = (
-            cell2[3] === "am" ||
+            timeCell[3] === "am" ||
             ((startHr > endHr) && startHr !== 12) ||
             (endHr === 12 && startHr < 12)
         ) ? "am" : "pm";
-        const startTimeString = `${cell1} ${cell2[1]} ${startTimeAMPM}`;
-        const endTimeString = `${cell1} ${cell2[2]} ${cell2[3]}`;
+        const startTimeString = `${dayCell} ${timeCell[1]} ${startTimeAMPM}`;
+        const endTimeString = `${dayCell} ${timeCell[3]} ${timeCell[3]}`;
 
         const startTime = moment(startTimeString, timeFormat);
         const endTime = moment(endTimeString, timeFormat);
@@ -99,22 +103,37 @@ export async function getFinals(): Promise<IExamInfo[]> {
         // Cell 4 probably only includes one room
         // However, it may also include multiple rooms in the same building, or
         //  multiple rooms in different buildings
-        const c4Split = cell4.split(",");
 
-        // Assumption: The "Comments" cell will either contain the text "Combined Section Final",
-        //  OR an additional exam location
-        // Assumption: If "Comments" has a value, "Building" and "Room" have values
-        if (cell5 && cell5 !== "" && cell5 !== "Combined Section Final") {
-            // Unusual; log TODO
-            c4Split.push(cell5);
+        if ((!bldgCell && roomCell) || (bldgCell && !roomCell)) {
+            console.log(`Unexpected format for key: ${key}`);
+            console.log(`Exactly one of building or room is missing`);
         }
-        if (cell3.length > 0 && c4Split.length > 0) {
+
+        const roomSplit = (roomCell) ? roomCell.split(",") : [];
+
+        // Old Assumption: The "Comments" cell will either contain the text
+        //  "Combined Section Final", OR an additional exam location
+        // INVALID!
+        // There does not appear to be a correlation between "Comments" text
+        //  and number of rooms
+
+        // Assumption: If "Comments" has a value, "Building" and "Room" have values
+
+        // Assumption: "Comments" value is always "Combined Section Final"
+        // If not, log and push to locations list
+        if (commentCell && commentCell !== "" && commentCell !== "Combined Section Final") {
+            console.log(`Unexpected format for key: ${key}`);
+            console.log(`Comment text was: ${commentCell}`);
+            roomSplit.push(commentCell);
+        }
+
+        if (bldgCell && bldgCell.length > 0 && roomSplit.length > 0) {
             // First character of building is (almost) always '2'
-            let bldg = trimBldg(cell3);
+            let bldg = trimBldg(bldgCell);
             // locations.add(`${bldg} ${c4Split[0]}`);
 
             // Already used first; iterate through remaining comma-separated values
-            for (let loc of c4Split) {
+            for (let loc of roomSplit) {
                 loc = loc.trim();
                 const locS = loc.split(/\s+/); // Trim spaces; split on one or more spaces
                 if (locS.length === 1) {
@@ -138,15 +157,19 @@ export async function getFinals(): Promise<IExamInfo[]> {
                 console.log("ERROR - Same class, different exam times");
             }
             // Add CRN
-            f.courseId.add(cell0[3]);
+            f.courseId.add(courseCell[3]);
             // Add locations
-            for (const loc of locations) { f.finalLocations.push(loc); }
+            for (const loc of locations) {
+                if (f.finalLocations.indexOf(loc) < 0) {
+                    f.finalLocations.push(loc);
+                }
+            }
         } else {
             finals.set(key, {
-                courseDept: cell0[1],
-                courseNum: cell0[2],
-                courseId: (new Set<string>()).add(cell0[3]),
-                courseTime: cell0[4],
+                courseDept: courseCell[1],
+                courseNum: courseCell[2],
+                courseId: (new Set<string>()).add(courseCell[3]),
+                courseTime: courseCell[4],
                 finalStart: startTime.format(),
                 finalEnd: endTime.format(),
                 finalLocations: locations,
