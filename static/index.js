@@ -4,15 +4,18 @@ window.onload = function () {
     const times = [];
     const now = moment();
 
-    const finalCards = Array.from(document.getElementsByClassName("final"))
-        .filter((f) => {
-            if (moment(f.dataset.finalEnd).dayOfYear < now.dayOfYear) {
-                f.classList.add("past");
-                return false;
-            }
-            return true;
-        });
+    // Template creates divs with class "final" for each final
+    // Filter out finals with dates in the past, and add the class "past",
+    //  which will apply a style to hide the element
+    const finalCards = Array.from(document.getElementsByClassName("final")).filter((f) => {
+        if (moment(f.dataset.finalEnd).dayOfYear < now.dayOfYear) {
+            f.classList.add("past");
+            return false;
+        }
+        return true;
+    });
 
+    // Only need to add countdown to finals which are in the future
     const finalCountdowns = Array.from(document.getElementsByClassName("finalCountdown"))
         .filter((f) => !f.parentElement.classList.contains("past"));
 
@@ -25,17 +28,26 @@ window.onload = function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('deadPanels')) {
         const finalsContainer = document.getElementById("finalsContainer");
-        urlParams.get('deadPanels')
+        const deadIndices = urlParams.get('deadPanels')
             .split(',')
-            .map(parseInt)
-            .filter((p) => !(!p || p < 5 || p > 19))  // Double negation to short-circuit NaN
-            .map((p) => {
-                let refCard = finalCards[p - 5];
-                if (!refCard) refCard = null;
-                const deadCard = document.createElement("div");
-                deadCard.classList.add("final");
-                finalsContainer.insertBefore(deadCard, refCard);
-            });
+            .map((p) => parseInt(p))  // for some reason, .map(parseInt) doesn't work
+            .filter((p) => !(isNaN(p)) && p >= 5 && p <= 19)
+            .map((p) => p - 5)
+            .sort();
+        for (let i = 0; i < deadIndices.length; i++) {
+            let refCard = finalCards[deadIndices[i]];
+            if (!refCard) refCard = null;
+            const deadCard = document.createElement("div");
+            deadCard.classList.add("final");
+            finalsContainer.insertBefore(deadCard, refCard);
+
+            // There is now one more card in the list; decrement all following
+            //  locations by one
+            // Indices are sorted
+            for (let j = i + 1; j < deadIndices.length; j++) {
+                deadIndices[j] -= 1;
+            }
+        }
     }
 
     Array.from(document.getElementsByClassName("finalTime"))
