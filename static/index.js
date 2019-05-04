@@ -30,9 +30,8 @@ window.onload = function () {
         const finalsContainer = document.getElementById("finalsContainer");
         const deadIndices = urlParams.get('deadPanels')
             .split(',')
-            .map((p) => parseInt(p))  // for some reason, .map(parseInt) doesn't work
-            .filter((p) => !(isNaN(p)) && p >= 5 && p <= 19)
-            .map((p) => p - 5)
+            .map((p) => parseInt(p) - 5)  // for some reason, .map(parseInt) doesn't work
+            .filter((p) => !(isNaN(p)) && p >= 0 && p <= 14)
             .sort();
         for (let i = 0; i < deadIndices.length; i++) {
             let refCard = finalCards[deadIndices[i]];
