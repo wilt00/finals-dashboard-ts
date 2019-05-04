@@ -48,7 +48,8 @@ app.use(async (ctx, next) => {
 
     // In a larger application, you might use a router here, which connects
     //  url strings with functions. This is enough for us though.
-    switch (ctx.url) {
+    // Split to allow arbitrary query parameters
+    switch (ctx.url.split("?")[0]) {
         case "/":
         case "/index.html":
             // Render index.mst into html, substituting the values in the object into the
