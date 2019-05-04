@@ -54,6 +54,14 @@ export async function getFinals(): Promise<IExamInfo[]> {
     // Regex:                   (1. Start Time -----)   (2. - )        (3. End Time -------) (4. --)
     const cell2RE = new RegExp(/([0-9]{1,2}:[0-9]{2})\s*(am|pm)?\s*-\s+([0-9]{1,2}:[0-9]{2}) (am|pm)/, "i");
 
+    // Match room number strings
+    //              Begins w/ "2" - omit from capture group
+    //              |    2 or more letters
+    //              |    |        One space
+    //              |    |        | Maybe one letter
+    //              |    |        | |     One or more numbers
+    const roomRE = /2\s?([A-Z]{2,}\s[A-Z]?[0-9]+)/;
+
     const getCell = (tds: Cheerio, i: number) => tds.eq(i).text().trim();
 
     page("#finals > tbody").children("tr").each((i, elem) => {
@@ -120,11 +128,19 @@ export async function getFinals(): Promise<IExamInfo[]> {
         // Assumption: If "Comments" has a value, "Building" and "Room" have values
 
         // Assumption: "Comments" value is always "Combined Section Final"
+        //   OR an incorrectly placed room number
         // If not, log and push to locations list
         if (commentCell && commentCell !== "" && commentCell !== "Combined Section Final") {
-            console.log(`Unexpected format for key: ${key}`);
-            console.log(`Comment text was: ${commentCell}`);
-            roomSplit.push(commentCell);
+            const rm = roomRE.exec(commentCell);
+            if (rm !== null) {
+                const room = rm[1];
+                console.log(`Detected room in comment cell for key: ${key}`);
+                console.log(`Adding room: ${room}`);
+                roomSplit.push(room);
+            } else {
+                console.log(`Unexpected format for key: ${key}`);
+                console.log(`Comment text was: ${commentCell}`);
+            }
         }
 
         if (bldgCell && bldgCell.length > 0 && roomSplit.length > 0) {
@@ -143,9 +159,17 @@ export async function getFinals(): Promise<IExamInfo[]> {
                     // Room in different building
                     bldg = trimBldg(locS[0]);
                     locations.push(`${bldg} ${locS[1]}`);
+                } else if (locS.length === 3 && locS[0] === "2") {
+                    // Initial '2' is separated by space (unusual)
+                    console.log(`Attempting to handle room description ${loc} for key: ${key}`);
+                    bldg = locS[1];
+                    const newLoc = `${bldg} ${locS[2]}`;
+                    console.log(`Inserting location: ${newLoc}`);
+                    locations.push(newLoc);
                 } else {
                     // What is this? Log it.
-                    // TODO
+                    console.log(`Unexpected value in room description for key: ${key}`);
+                    console.log(`Value was: ${loc}`);
                 }
             }
         }
