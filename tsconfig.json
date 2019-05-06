@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "dist",
     "noImplicitAny": true,
-    "allowJs": true,
+    "allowJs": false,
     "lib": [
       "es2015"
     ],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "moduleResolution": "node"
   },
   "include": [
     "src/**/*"

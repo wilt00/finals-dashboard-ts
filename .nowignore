@@ -1,0 +1,7 @@
+dist
+node_modules
+**/.eslintrc.json
+views/home.pug
+views/index.css
+finals.txt
+tslint.json

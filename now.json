@@ -1,0 +1,31 @@
+{
+    "version": 2,
+    "alias": ["uicfinals.halsted.space"],
+    "env": {
+        "IS_NOW": "true"
+    },
+    "builds": [
+        {
+            "src": "./src/**/*.ts",
+            "use": "@now/node"
+        },
+        {
+            "src": "static/**",
+            "use": "@now/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/",
+            "dest": "/src/index.ts"
+        },
+        {
+            "src": "/index.js",
+            "dest": "/static/index.js"
+        },
+        {
+            "src": "/api/*",
+            "dest": "/src/index.ts"
+        }
+    ]
+}
