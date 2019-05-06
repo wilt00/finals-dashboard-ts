@@ -86,22 +86,51 @@ export async function getFinals(): Promise<IExamInfo[]> {
         // Key: Dept Num Time
         const key = `${courseCell[1]} ${courseCell[2]} ${courseCell[4]} ${dayCell} ${timeCell}`;
 
-        // Only end time's "am/pm" is given
+        // *Usually* Only end time's "am/pm" is given
         // Determine whether start time is in morning or afternoon
         // Start time will be 'am' if either:
         //  - End time is 'am', or
         //  - Numeric hour of start time is greater than end time (e.g. 11 > 1) AND not equal to 12, or
         //  - Numeric hour of end time is 12 and numeric hour of star time is < 12
         // Assumptions: no exam will ever be held across midnight
+        //              no exam will ever start before 7:00 AM
+        //              no exam will ever finish after 10:00 PM
         const startHr = parseInt(timeCell[1].split(":")[0], 10);
         const endHr = parseInt(timeCell[3].split(":")[0], 10);
-        const startTimeAMPM = (
-            timeCell[3] === "am" ||
-            ((startHr > endHr) && startHr !== 12) ||
-            (endHr === 12 && startHr < 12)
-        ) ? "am" : "pm";
+        let startTimeAMPM;
+        if (timeCell[2]) {
+            // If we have one, use it
+            startTimeAMPM = timeCell[2].toLowerCase();
+        } else if (timeCell[3] === "am") {
+            // If end time is in the morning, start time must also have been
+            startTimeAMPM = "am";
+        } else if ((startHr > endHr) && startHr !== 12) {
+            // If start hour is larger than end hour, and not 12
+            startTimeAMPM = "am";
+        } else if (endHr === 12 && startHr < 12) {
+            // Strict less than, since 12pm is afternoon
+            startTimeAMPM = "am";
+        } else {
+            startTimeAMPM = "pm";
+        }
+
+        const endTimeAMPM = timeCell[4].toLowerCase();
+
+        if (startHr > 12 || endHr > 12) {
+            console.log(`Invalid time for key: ${key}`);
+            console.log(`Either start time ${startHr} or end time ${endHr} is not 12-hr-formatted`);
+        }
+        if (startHr <= 7 && startTimeAMPM === "am") {
+            console.log(`Invalid time for key: ${key}`);
+            console.log(`Start time of ${startHr} ${startTimeAMPM} is improbable`);
+        }
+        if (endHr >= 10 && endHr !== 12 && endTimeAMPM === "pm") {
+            console.log(`Invalid time for key: ${key}`);
+            console.log(`End time of ${endHr} ${endTimeAMPM} is improbable`);
+        }
+
         const startTimeString = `${dayCell} ${timeCell[1]} ${startTimeAMPM}`;
-        const endTimeString = `${dayCell} ${timeCell[3]} ${timeCell[3]}`;
+        const endTimeString = `${dayCell} ${timeCell[3]} ${endTimeAMPM}`;
 
         const startTime = moment(startTimeString, timeFormat);
         const endTime = moment(endTimeString, timeFormat);
