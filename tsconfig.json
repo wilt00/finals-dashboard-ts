@@ -1,18 +1,24 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "noImplicitAny": true,
-    "allowJs": true,
-    "lib": [
-      "es2015"
-    ],
-    "downlevelIteration": true
+      "incremental": true,
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "target": "es2017",
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "outDir": "dist",
+      "downlevelIteration": true,
+      "baseUrl": ".",
+      "lib": [ "es2017", "dom"],
+      "paths": {
+          "*": [
+              "node_modules/*",
+              "src/types/*"
+          ]
+      }
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+      "src/**/*"
   ]
 }

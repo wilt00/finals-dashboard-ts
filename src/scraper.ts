@@ -1,6 +1,6 @@
-import * as cheerio from "cheerio";
-import * as moment from "moment";
-import * as rp from "request-promise-native";
+import cheerio from "cheerio";
+import moment from "moment";
+import rp from "request-promise-native";
 
 const finalsUrl = "https://registrar.uic.edu/current_students/calendars/final-exams";
 

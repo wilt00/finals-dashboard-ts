@@ -1,6 +1,6 @@
-import * as Koa from "koa";
-import * as kstatic from "koa-static";
-import * as views from "koa-views";
+import Koa from "koa";
+import kstatic from "koa-static";
+import views from "koa-views";
 
 import IExamInfo, {getFinals} from "./scraper";
 
@@ -30,7 +30,7 @@ const app = new Koa();
 // Register the static file serving middleware
 // Any files under the ./static subdirectory become available:
 // e.g. ./static/abc.html is served at http://[siteaddress].edu/abc.html
-app.use(kstatic("static"));
+app.use(kstatic("dist/public"));
 
 // Register the template rendering middleware
 // This adds the ctx.response.render method, and sets .mst files to be rendered
