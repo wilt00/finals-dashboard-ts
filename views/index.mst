@@ -12,7 +12,7 @@ html,body {
     font-size: 20px;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
-    background-color: #4ABDAC;
+    background-color: #333333;
 }
 ::-webkit-scrollbar {
     display: none;
@@ -26,8 +26,12 @@ html,body {
     margin: 0;
     padding: 20px;
 }
-.coolShadow {
-    color: rgba(0,0,0,0.6);
+.lightCoolShadow {
+    color: rgba(255,255,255,0.8);
+    text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
+}
+.darkCoolShadow {
+    color: rgba(0,0,0,0.8);
     text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
 }
 .final {
@@ -80,25 +84,23 @@ html,body {
 }
 #gradCountdown {
     font-family: 'Roboto Mono', monospace;
-    color: lightgoldenrodyellow;
 }
 </style>
 </head>
 <body>
-<div id="topbar" class="coolShadow">
+<div id="topbar" class="lightCoolShadow">
     <h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1>
 </div>
 <div id="finalsContainer">
     {{#finalsList}}
     <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
-        <p class="finalNum coolShadow">{{courseNum}}</p>
-        <p class="finalCountdown coolShadow"><!-- Ba na na na! -->00:00:00</p>
+        <p class="finalNum darkCoolShadow">{{courseNum}}</p>
+        <p class="finalCountdown darkCoolShadow">00:00:00</p>
         <p class="finalTime"></p>
         <p class="finalLocation">{{#finalLocations}}<span>{{.}}</span>{{/finalLocations}}</p>
     </div>
     {{/finalsList}}
 </div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
 <script type="text/javascript" src="./index.js"></script>
 </body>
 </html>

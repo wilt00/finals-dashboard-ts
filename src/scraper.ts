@@ -1,13 +1,13 @@
-import * as cheerio from "cheerio";
-import * as moment from "moment";
-import * as rp from "request-promise-native";
+import cheerio from "cheerio";
+import moment from "moment";
+import rp from "request-promise-native";
 
 const finalsUrl = "https://registrar.uic.edu/current_students/calendars/final-exams";
 
 /**
  * Information for the final exam for a class
  */
-export default interface IExamInfo {
+export default interface ExamInfo {
     courseDept: string;        // e.g. CS
     courseNum: string;         // e.g. 141; formerly courseName
     courseId: Set<string>;     // CRN; formerly courseNum
@@ -32,10 +32,10 @@ function trimBldg(b: string): string {
 /**
  * Fetch finals information from page, scrape finals, and return list of exams
  */
-export async function getFinals(): Promise<IExamInfo[]> {
-    const pageHtml = await rp(finalsUrl);  // Fetch finals page html text
+export async function getFinals(): Promise<ExamInfo[]> {
+    const pageHtml = await rp(finalsUrl, {}, (): void => {});  // Fetch finals page html text
     const page = cheerio.load(pageHtml);   // Parse html into a navigable tree
-    const finals = new Map<string, IExamInfo>();
+    const finals = new Map<string, ExamInfo>();
 
     // Moment.js uses local time, don't worry about time zone
     const timeFormat = "ddd MMM D h:mm a";
@@ -62,9 +62,9 @@ export async function getFinals(): Promise<IExamInfo[]> {
     //              |    |        | |     One or more numbers
     const roomRE = /2\s?([A-Z]{2,}\s[A-Z]?[0-9]+)/;
 
-    const getCell = (tds: Cheerio, i: number) => tds.eq(i).text().trim();
+    const getCell = (tds: Cheerio, i: number): string => tds.eq(i).text().trim();
 
-    page("#finals > tbody").children("tr").each((i, elem) => {
+    page("#finals > tbody").children("tr").each((i, elem): void => {
         const tds = page(elem).children();
 
         const courseCell = cell0RE.exec(getCell(tds, 0));
@@ -230,7 +230,7 @@ export async function getFinals(): Promise<IExamInfo[]> {
         }
     });
 
-    return Array.from(finals.values()).sort((a, b) => {
+    return Array.from(finals.values()).sort((a, b): number => {
         // Sort finals in list by their start time
         const aT = moment(a.finalStart);
         const bT = moment(b.finalStart);

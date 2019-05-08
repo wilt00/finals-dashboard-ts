@@ -1,14 +1,14 @@
-import * as Koa from "koa";
-import * as kstatic from "koa-static";
-import * as views from "koa-views";
+import Koa from "koa";
+import kstatic from "koa-static";
+import views from "koa-views";
 
-import IExamInfo, {getFinals} from "./scraper";
+import IExamInfo, { getFinals } from "./scraper";
 
 const now = new Date();
 const month = now.getMonth();
 
 let SEMESTER: string;
-if (month >= 1 && month <= 5)  {
+if (month >= 1 && month <= 5) {
     SEMESTER = "Spring";      // February through June
 } else if (month >= 6 && month <= 8) {
     SEMESTER = "Summer";      // July through September
@@ -30,20 +30,20 @@ const app = new Koa();
 // Register the static file serving middleware
 // Any files under the ./static subdirectory become available:
 // e.g. ./static/abc.html is served at http://[siteaddress].edu/abc.html
-app.use(kstatic("static"));
+app.use(kstatic("dist/public"));
 
 // Register the template rendering middleware
 // This adds the ctx.response.render method, and sets .mst files to be rendered
 // with the Mustache engine
 app.use(views(`${__dirname}/../views`, {
-    map: {mst: "mustache"},
+    map: { mst: "mustache" },
 }));
 
 // Our app logic goes here
-app.use(async (ctx, next) => {
+app.use(async (ctx, next): Promise<void> => {
     if (!FINALSLIST) {
         // If FINALSLIST is not populated, get finals and filter just the CS courses
-        FINALSLIST = (await getFinals()).filter((xm) => xm.courseDept === "CS");
+        FINALSLIST = (await getFinals()).filter((xm): boolean => xm.courseDept === "CS");
     }
 
     // In a larger application, you might use a router here, which connects
@@ -71,7 +71,7 @@ app.use(async (ctx, next) => {
     //  no need for us to test for those here
 });
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
 // Equivalent to:
 // http.createServer(app.callback()).listen(8080);
 // In other words, run Koa's function chain in response to an incoming http request on given port
