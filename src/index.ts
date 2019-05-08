@@ -40,10 +40,10 @@ app.use(views(`${__dirname}/../views`, {
 }));
 
 // Our app logic goes here
-app.use(async (ctx, next) => {
+app.use(async (ctx, next): Promise<void> => {
     if (!FINALSLIST) {
         // If FINALSLIST is not populated, get finals and filter just the CS courses
-        FINALSLIST = (await getFinals()).filter((xm) => xm.courseDept === "CS");
+        FINALSLIST = (await getFinals()).filter((xm): boolean => xm.courseDept === "CS");
     }
 
     // In a larger application, you might use a router here, which connects

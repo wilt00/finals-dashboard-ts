@@ -14,7 +14,7 @@ window.onload = function () {
     // Template creates divs with class "final" for each final
     // Filter out finals with dates in the past, and add the class "past",
     //  which will apply a style to hide the element
-    const finalCards = Array.from(document.querySelectorAll(".final")).filter((f: HTMLDivElement) => {
+    const finalCards = Array.from(document.getElementsByClassName("final")).filter((f: HTMLDivElement) => {
         if (moment(f.dataset.finalEnd).dayOfYear < now.dayOfYear) {
             f.classList.add("past");
             return false;
@@ -23,7 +23,7 @@ window.onload = function () {
     });
 
     // Only need to add countdown to finals which are in the future
-    const finalCountdowns = Array.from(document.querySelectorAll(".finalCountdown"))
+    const finalCountdowns = Array.from(document.getElementsByClassName("finalCountdown"))
         .filter((f) => !f.parentElement.classList.contains("past"));
 
     // Account for dead panels in monitor wall
@@ -34,7 +34,7 @@ window.onload = function () {
     //  number is between 5 and 19 inclusive
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has("deadPanels")) {
-        const finalsContainer = document.querySelector("#finalsContainer");
+        const finalsContainer = document.getElementById("finalsContainer");
         const deadIndices = urlParams.get("deadPanels")
             .split(",")
             .map((p) => parseInt(p) - 5)  // for some reason, .map(parseInt) doesn't work
@@ -56,7 +56,7 @@ window.onload = function () {
         }
     }
 
-    Array.from(document.querySelectorAll(".finalTime"))
+    Array.from(document.getElementsByClassName("finalTime"))
         .filter((f) => !f.parentElement.classList.contains("past"))
         .map((ft: HTMLDivElement, i) => {
             const final = ft.parentNode as HTMLDivElement;
@@ -110,15 +110,15 @@ window.onload = function () {
         });
         const gradTimeDiff = moment.duration(gradTime.diff(moment()));
         if (Math.floor(gradTimeDiff.asHours()) > 0 || gradTimeDiff.minutes() > 0 || gradTimeDiff.seconds() > 0) {
-            document.querySelector("#gradCountdown").innerHTML = `${
+            document.getElementById("gradCountdown").innerHTML = `${
                 Math.floor(gradTimeDiff.asHours()).toString().padStart(2, "0")
-                }:${
+            }:${
                 gradTimeDiff.minutes().toString().padStart(2, "0")
-                }:${
+            }:${
                 gradTimeDiff.seconds().toString().padStart(2, "0")
-                }`;
+            }`;
         } else {
-            document.querySelector("#gradCountdown").innerHTML = "00:00:00";
+            document.getElementById("gradCountdown").innerHTML = "00:00:00";
         }
     }
     window.setInterval(updateCountdowns, 1000);
