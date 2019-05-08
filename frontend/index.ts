@@ -7,7 +7,7 @@ class Exam {
     public past: boolean;
 }
 
-window.onload = function() {
+window.onload = function () {
     const times: Exam[] = [];
     const now = moment();
 
@@ -109,13 +109,18 @@ window.onload = function() {
             fc.innerHTML = `${hrs.toString().padStart(2, "0")}:${minsString}:${secsSeconds}`;
         });
         const gradTimeDiff = moment.duration(gradTime.diff(moment()));
-        document.querySelector("#gradCountdown").innerHTML = `${
-            Math.floor(gradTimeDiff.asHours()).toString().padStart(2, "0")
-            }:${
-            gradTimeDiff.minutes().toString().padStart(2, "0")
-            }:${
-            gradTimeDiff.seconds().toString().padStart(2, "0")
-            }`;
+        if (Math.floor(gradTimeDiff.asHours()) > 0 || gradTimeDiff.minutes() > 0 || gradTimeDiff.seconds() > 0) {
+            console.log(gradTimeDiff);
+            document.querySelector("#gradCountdown").innerHTML = `${
+                Math.floor(gradTimeDiff.asHours()).toString().padStart(2, "0")
+                }:${
+                gradTimeDiff.minutes().toString().padStart(2, "0")
+                }:${
+                gradTimeDiff.seconds().toString().padStart(2, "0")
+                }`;
+        } else {
+            document.querySelector("#gradCountdown").innerHTML = "00:00:00";
+        }
     }
     window.setInterval(updateCountdowns, 1000);
 };

@@ -2,13 +2,13 @@ import Koa from "koa";
 import kstatic from "koa-static";
 import views from "koa-views";
 
-import IExamInfo, {getFinals} from "./scraper";
+import IExamInfo, { getFinals } from "./scraper";
 
 const now = new Date();
 const month = now.getMonth();
 
 let SEMESTER: string;
-if (month >= 1 && month <= 5)  {
+if (month >= 1 && month <= 5) {
     SEMESTER = "Spring";      // February through June
 } else if (month >= 6 && month <= 8) {
     SEMESTER = "Summer";      // July through September
@@ -36,7 +36,7 @@ app.use(kstatic("dist/public"));
 // This adds the ctx.response.render method, and sets .mst files to be rendered
 // with the Mustache engine
 app.use(views(`${__dirname}/../views`, {
-    map: {mst: "mustache"},
+    map: { mst: "mustache" },
 }));
 
 // Our app logic goes here
@@ -71,7 +71,7 @@ app.use(async (ctx, next) => {
     //  no need for us to test for those here
 });
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
 // Equivalent to:
 // http.createServer(app.callback()).listen(8080);
 // In other words, run Koa's function chain in response to an incoming http request on given port
