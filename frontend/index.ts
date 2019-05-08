@@ -1,4 +1,3 @@
-/*global moment*/
 import moment from "moment";
 
 class Exam {
@@ -7,14 +6,14 @@ class Exam {
     public past: boolean;
 }
 
-window.onload = function () {
+window.onload = function (): void {
     const times: Exam[] = [];
     const now = moment();
 
     // Template creates divs with class "final" for each final
     // Filter out finals with dates in the past, and add the class "past",
     //  which will apply a style to hide the element
-    const finalCards = Array.from(document.getElementsByClassName("final")).filter((f: HTMLDivElement) => {
+    const finalCards = Array.from(document.getElementsByClassName("final")).filter((f: HTMLDivElement): boolean => {
         if (moment(f.dataset.finalEnd).dayOfYear < now.dayOfYear) {
             f.classList.add("past");
             return false;
@@ -24,7 +23,7 @@ window.onload = function () {
 
     // Only need to add countdown to finals which are in the future
     const finalCountdowns = Array.from(document.getElementsByClassName("finalCountdown"))
-        .filter((f) => !f.parentElement.classList.contains("past"));
+        .filter((f): boolean => !f.parentElement.classList.contains("past"));
 
     // Account for dead panels in monitor wall
     // Panels are numbered from the top left corner, starting from 0
@@ -37,8 +36,8 @@ window.onload = function () {
         const finalsContainer = document.getElementById("finalsContainer");
         const deadIndices = urlParams.get("deadPanels")
             .split(",")
-            .map((p) => parseInt(p) - 5)  // for some reason, .map(parseInt) doesn't work
-            .filter((p) => !(isNaN(p)) && p >= 0 && p <= 14)
+            .map((p): number => parseInt(p) - 5)  // for some reason, .map(parseInt) doesn't work
+            .filter((p): boolean => !(isNaN(p)) && p >= 0 && p <= 14)
             .sort();
         for (let i = 0; i < deadIndices.length; i++) {
             let refCard = finalCards[deadIndices[i]];
@@ -57,8 +56,8 @@ window.onload = function () {
     }
 
     Array.from(document.getElementsByClassName("finalTime"))
-        .filter((f) => !f.parentElement.classList.contains("past"))
-        .map((ft: HTMLDivElement, i) => {
+        .filter((f): boolean => !f.parentElement.classList.contains("past"))
+        .map((ft: HTMLDivElement, i): void => {
             const final = ft.parentNode as HTMLDivElement;
             const start = moment(final.dataset.finalStart);
             const end = moment(final.dataset.finalEnd);
@@ -72,10 +71,10 @@ window.onload = function () {
 
     const gradTime = times.slice(-1)[0].end;
 
-    function updateCountdowns() {
+    function updateCountdowns(): void {
         const now = moment();
 
-        finalCountdowns.map((fc, i) => {
+        finalCountdowns.map((fc, i): void => {
             if (times[i].past) { return; }
             const diff = moment.duration(times[i].start.diff(now));
             const hrs = Math.floor(diff.asHours());
