@@ -1,5 +1,6 @@
 import moment from "moment";
-
+import "./favicon.ico";
+import "./main.scss";
 class Exam {
     public start: moment.Moment;
     public end: moment.Moment;
