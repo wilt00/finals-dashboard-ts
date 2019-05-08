@@ -110,7 +110,6 @@ window.onload = function () {
         });
         const gradTimeDiff = moment.duration(gradTime.diff(moment()));
         if (Math.floor(gradTimeDiff.asHours()) > 0 || gradTimeDiff.minutes() > 0 || gradTimeDiff.seconds() > 0) {
-            console.log(gradTimeDiff);
             document.querySelector("#gradCountdown").innerHTML = `${
                 Math.floor(gradTimeDiff.asHours()).toString().padStart(2, "0")
                 }:${
