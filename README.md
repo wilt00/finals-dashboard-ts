@@ -1,5 +1,6 @@
 # UIC Finals Dashboard
 UIC ACM finals countdown wall, rewritten for simplicity
+![Screenshot](https://github.com/bmiddha/finals-dashboard-ts/blob/master/screenshots/screenshot1.png)
 ## Data Extraction
 This is done by `scraper.ts`
 ## Webapp Deployment
