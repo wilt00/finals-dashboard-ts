@@ -1,13 +1,24 @@
 import moment, { Moment } from "moment";
+import { library, dom } from "@fortawesome/fontawesome-svg-core";
+import { faCode } from "@fortawesome/free-solid-svg-icons/faCode";
+import { faHeart } from "@fortawesome/free-solid-svg-icons/faHeart";
+import { faGithub } from "@fortawesome/free-brands-svg-icons/faGithub";
+
 import "./favicon.ico";
 import "./main.scss";
-class Exam {
+class Exam {    
     public start: moment.Moment;
     public end: moment.Moment;
     public past: boolean;
 }
 
 window.onload = function (): void {
+
+    library.add(faCode);
+    library.add(faHeart);
+    library.add(faGithub);
+    dom.watch();
+
     const times: Exam[] = [];
     const now = moment();
 

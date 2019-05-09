@@ -20,6 +20,9 @@
     </div>
     {{/finalsList}}
 </div>
+<footer class="lightCoolShadow"><i class="fas fa-code"></i> with <i class="fas fa-heart"></i> by <a href="https://github.com/clee231">Chase Lee</a>
+, <a href="https://github.com/wilt00">Will Toher</a>, and <a href="https://github.com/bmiddha">Bharat Middha</a><br><br>
+<a href="https://github.com/wilt00/finals-dashboard-ts"><i class="fab fa-github"></i> finals-dashboard-ts</a></footer>
 <script type="text/javascript" src="./index.js"></script>
 </body>
 </html>
