@@ -1,8 +1,5 @@
 import path from "path";
 import webpack from "webpack";
-import fs from "fs";
-
-fs.createReadStream('frontend/favicon.ico').pipe(fs.createWriteStream('dist/public/favicon.ico'));
 
 const config: webpack.Configuration = {
     entry: {
@@ -27,7 +24,7 @@ const config: webpack.Configuration = {
             {
                 test: /\.(jpg|jpeg|gif|png|ico)$/,
                 exclude: /node_modules/,
-                loader:'file-loader?name=img/[path][name].[ext]&context=./app/images'
+                loader:'file-loader?name=public/[name].[ext]'
             },
         ]
     },
