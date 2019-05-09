@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<title>UIC Finals Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#333333">
+    <meta charset="utf-8" />
+    <title>UIC Finals Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#333333">
 </head>
+
 <body>
-<div id="topbar" class="lightCoolShadow">
-    <h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1>
-</div>
-<div id="finalsContainer">
-    {{#finalsList}}
-    <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
-        <p class="finalNum darkCoolShadow">{{courseNum}}</p>
-        <p class="finalCountdown darkCoolShadow">00:00:00</p>
-        <p class="finalTime"></p>
-        <p class="finalLocation">{{#finalLocations}}<span>{{.}}</span>{{/finalLocations}}</p>
+    <div id="topbar" class="lightCoolShadow">
+        <h1>{{semester}} {{year}} Graduation | <span id="gradCountdown">00:00:00</span></h1>
     </div>
-    {{/finalsList}}
-</div>
-<footer class="lightCoolShadow"><i class="fas fa-code"></i> with <i class="fas fa-heart"></i> by <a href="https://github.com/clee231">Chase Lee</a>
-, <a href="https://github.com/wilt00">Will Toher</a>, and <a href="https://github.com/bmiddha">Bharat Middha</a><br><br>
-<a href="https://github.com/wilt00/finals-dashboard-ts"><i class="fab fa-github"></i> finals-dashboard-ts</a></footer>
-<script type="text/javascript" src="./index.js"></script>
+    <div id="finalsContainer">
+        {{#finalsList}}
+        <div class="final" data-final-start="{{finalStart}}" data-final-end="{{finalEnd}}">
+            <p class="finalNum darkCoolShadow">{{courseNum}}</p>
+            <p class="finalCountdown darkCoolShadow">00:00:00</p>
+            <p class="finalTime"></p>
+            <p class="finalLocation">{{#finalLocations}}<span>{{.}}</span>{{/finalLocations}}</p>
+        </div>
+        {{/finalsList}}
+    </div>
+    <footer class="lightCoolShadow"><i class="fas fa-code"></i> with <i class="fas fa-heart"></i> by <a href="https://github.com/clee231">Chase Lee</a>, 
+    <a href="https://github.com/wilt00">Will Toher</a>, and <a href="https://github.com/bmiddha">Bharat Middha</a> in 100% 
+    <a href="https://www.typescriptlang.org/">TypeScript</a><br><br>
+    <a href="https://github.com/wilt00/finals-dashboard-ts"><i class="fab fa-github"></i> finals-dashboard-ts</a></footer>
+
+    <script type="text/javascript" src="./index.js"></script>
 </body>
+
 </html>
