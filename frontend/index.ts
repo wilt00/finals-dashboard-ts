@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment, { Moment } from "moment";
 import "./favicon.ico";
 import "./main.scss";
 class Exam {
@@ -97,26 +97,11 @@ window.onload = function (): void {
             if (hrs < 2) {
                 fc.parentElement.classList.add("countdownWarning");
             }
-
-            const mins = diff.minutes();
-            let minsString = mins.toString()
-            if (mins <= 0) { minsString = "00"; } else if (mins < 10) { minsString = `0${minsString}`; }
-
-            const secs = diff.seconds();
-            let secsSeconds = secs.toString();
-            if (secs <= 0) { secsSeconds = "00"; } else if (secs < 10) { secsSeconds = `0${secsSeconds}`; }
-
-            fc.innerHTML = `${hrs.toString().padStart(2, "0")}:${minsString}:${secsSeconds}`;
+            fc.innerHTML = moment.utc(diff.asMilliseconds()).format("hh:mm:ss");
         });
         const gradTimeDiff = moment.duration(gradTime.diff(moment()));
         if (Math.floor(gradTimeDiff.asHours()) > 0 || gradTimeDiff.minutes() > 0 || gradTimeDiff.seconds() > 0) {
-            document.getElementById("gradCountdown").innerHTML = `${
-                Math.floor(gradTimeDiff.asHours()).toString().padStart(2, "0")
-            }:${
-                gradTimeDiff.minutes().toString().padStart(2, "0")
-            }:${
-                gradTimeDiff.seconds().toString().padStart(2, "0")
-            }`;
+            document.getElementById("gradCountdown").innerHTML = moment.utc(gradTimeDiff.asMilliseconds()).format("hh:mm:ss");
         } else {
             document.getElementById("gradCountdown").innerHTML = "00:00:00";
         }
