@@ -2,7 +2,9 @@ import Koa from "koa";
 import kstatic from "koa-static";
 import views from "koa-views";
 
-import IExamInfo, { getFinals } from "./scraper";
+// import { ExamInfo, getFinals } from "./scraper";
+import { ExamInfo, getFinals } from "./getFinals";
+
 
 const now = new Date();
 const month = now.getMonth();
@@ -18,7 +20,7 @@ if (month >= 1 && month <= 5) {
 
 const YEAR = now.getFullYear().toString();
 
-let FINALSLIST: IExamInfo[];
+let FINALSLIST: ExamInfo[];
 
 // Use Koa to serve application
 // Koa is like Express but more async
@@ -45,7 +47,7 @@ app.use(async (ctx, next): Promise<void> => {
         // If FINALSLIST is not populated, get finals and filter just the CS courses
         FINALSLIST = (await getFinals()).filter((xm): boolean => xm.courseDept === "CS");
     }
-
+    
     // In a larger application, you might use a router here, which connects
     //  url strings with functions. This is enough for us though.
     // Split to allow arbitrary query parameters

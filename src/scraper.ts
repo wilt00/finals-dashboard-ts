@@ -7,7 +7,7 @@ const finalsUrl = "https://registrar.uic.edu/current_students/calendars/final-ex
 /**
  * Information for the final exam for a class
  */
-export default interface ExamInfo {
+export interface ExamInfo {
     courseDept: string;        // e.g. CS
     courseNum: string;         // e.g. 141; formerly courseName
     courseId: Set<string>;     // CRN; formerly courseNum
