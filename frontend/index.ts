@@ -108,11 +108,11 @@ window.onload = function (): void {
             if (hrs < 2) {
                 fc.parentElement.classList.add("countdownWarning");
             }
-            fc.innerHTML = moment.utc(diff.asMilliseconds()).format("hh:mm:ss");
+            fc.innerHTML = moment.utc(diff.asMilliseconds()).format("HH:mm:ss");
         });
         const gradTimeDiff = moment.duration(gradTime.diff(moment()));
         if (Math.floor(gradTimeDiff.asHours()) > 0 || gradTimeDiff.minutes() > 0 || gradTimeDiff.seconds() > 0) {
-            document.getElementById("gradCountdown").innerHTML = moment.utc(gradTimeDiff.asMilliseconds()).format("hh:mm:ss");
+            document.getElementById("gradCountdown").innerHTML = moment.utc(gradTimeDiff.asMilliseconds()).format("HH:mm:ss");
         } else {
             document.getElementById("gradCountdown").innerHTML = "00:00:00";
         }
