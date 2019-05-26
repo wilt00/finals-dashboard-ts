@@ -60,7 +60,7 @@
     "koa-views": "^6.2.0",
     "moment": "^2.24.0",
     "mustache": "^3.0.1",
-    "node-fetch": "^2.5.0",
+    "node-fetch": "^2.6.0",
     "path-to-regexp": "^3.0.0",
     "pug": "^2.0.3",
     "request": "^2.88.0",
