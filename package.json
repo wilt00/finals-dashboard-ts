@@ -36,12 +36,12 @@
     "concurrently": "^4.1.0",
     "eslint": "^5.16.0",
     "path": "^0.12.7",
-    "ts-loader": "^6.0.0",
+    "ts-loader": "^9.4.2",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5",
-    "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.2"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
